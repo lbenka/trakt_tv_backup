@@ -62,6 +62,7 @@ class Episode:
 
 
 if __name__ == "__main__":
+    uniques = set()
     raw_history = open("watched.txt", "r")
 
     for row in raw_history.readlines():
@@ -71,8 +72,12 @@ if __name__ == "__main__":
             parsed_row = Movie.from_db(row)
         else:
             parsed_row = Episode.from_db(row)
-
+        
+        if parsed_row.id in uniques:
+            continue 
+        
         response = Trakt["sync/history"].add(parsed_row.to_post())
+        uniques.add(parsed_row.id)
         print(response)
 
     raw_history.close()
